@@ -7,13 +7,13 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
 from toolkit.parser import *
-import design
 import design.mainform
 
 
 class SendersViewItem(QTreeWidgetItem):
     def __lt__(self, other: SendersViewItem):
         return int(self.text(1)) < int(other.text(1))
+
 
 class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -35,7 +35,7 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
             if line.startswith("----"):
                 item = QTreeWidgetItem()
                 item.setText(0, line)
-                
+
                 self.chatsView.addTopLevelItem(item)
                 item.setFirstColumnSpanned(True)
                 continue
@@ -54,6 +54,7 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
             item.setText(0, nickname)
             item.setText(1, nicknames.get(nickname).__str__())
             self.sendersView.addTopLevelItem(item)
+
 
 if __name__ == "__main__":
     app = QApplication()
