@@ -33,7 +33,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -86,6 +86,51 @@
        <attribute name="title">
         <string>분석 결과</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="resultCmbBox">
+          <item>
+           <property name="text">
+            <string>유저별 활동 시간 분석 결과</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>채팅방의 활성 시간 분석 결과</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>대화 수 상위 10명의 대화 비율 분석 결과</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWebEngineView" name="resultView">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -171,6 +216,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

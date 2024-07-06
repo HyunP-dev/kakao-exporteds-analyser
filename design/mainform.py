@@ -16,10 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDockWidget, QHeaderView, QMainWindow,
-    QMenu, QMenuBar, QSizePolicy, QStatusBar,
-    QTabWidget, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import (QApplication, QComboBox, QDockWidget, QHeaderView,
+    QMainWindow, QMenu, QMenuBar, QSizePolicy,
+    QStatusBar, QTabWidget, QTreeWidget, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -52,6 +53,24 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
+        self.verticalLayout_4 = QVBoxLayout(self.tab_2)
+        self.verticalLayout_4.setSpacing(0)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.resultCmbBox = QComboBox(self.tab_2)
+        self.resultCmbBox.addItem("")
+        self.resultCmbBox.addItem("")
+        self.resultCmbBox.addItem("")
+        self.resultCmbBox.setObjectName(u"resultCmbBox")
+
+        self.verticalLayout_4.addWidget(self.resultCmbBox)
+
+        self.resultView = QWebEngineView(self.tab_2)
+        self.resultView.setObjectName(u"resultView")
+        self.resultView.setUrl(QUrl(u"about:blank"))
+
+        self.verticalLayout_4.addWidget(self.resultView)
+
         self.tabWidget.addTab(self.tab_2, "")
 
         self.verticalLayout_2.addWidget(self.tabWidget)
@@ -96,7 +115,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -110,6 +129,10 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"\ubcf4\ub0b8 \uc2dc\uac01", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\ub2c9\ub124\uc784", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\ub300\ud654 \ub0b4\uc6a9", None))
+        self.resultCmbBox.setItemText(0, QCoreApplication.translate("MainWindow", u"\uc720\uc800\ubcc4 \ud65c\ub3d9 \uc2dc\uac04 \ubd84\uc11d \uacb0\uacfc", None))
+        self.resultCmbBox.setItemText(1, QCoreApplication.translate("MainWindow", u"\ucc44\ud305\ubc29\uc758 \ud65c\uc131 \uc2dc\uac04 \ubd84\uc11d \uacb0\uacfc", None))
+        self.resultCmbBox.setItemText(2, QCoreApplication.translate("MainWindow", u"\ub300\ud654 \uc218 \uc0c1\uc704 10\uba85\uc758 \ub300\ud654 \ube44\uc728 \ubd84\uc11d \uacb0\uacfc", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\ubd84\uc11d \uacb0\uacfc", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\ud30c\uc77c", None))
         self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"\ub3c4\uc6c0\ub9d0", None))
