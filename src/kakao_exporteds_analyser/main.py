@@ -9,6 +9,8 @@ import plotly.express as px
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+
+# from toolkit.legacy_parser import *
 from toolkit.parser import *
 
 
@@ -38,12 +40,11 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
 
         model = self.chatsView.model()
         with open(path, encoding="utf-8-sig") as f:
-            lines = list(map(lambda line: line[:-1], f.readlines()))
-        print(lines)
+            text = f.read()
 
         messages = []
         nicknames = Counter()
-        for data in iterate(lines[3:]):
+        for data in Parser.parse(text):
             match data:
                 case data if isinstance(data, datetime.date) or isinstance(data, str):
                     item = QTreeWidgetItem()
@@ -54,7 +55,7 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
                     item = QTreeWidgetItem()
                     nicknames[data.nickname] += 1
                     item.setText(0, data.nickname)
-                    item.setText(1, data.timestamp.strftime("%p %I:%M"))
+                    item.setText(1, data.timestamp.strftime("%Y-%m-%d %p %I:%M"))
                     item.setText(2, data.content.replace("\n", " "))
                     self.chatsView.addTopLevelItem(item)
                     messages.append(data)
