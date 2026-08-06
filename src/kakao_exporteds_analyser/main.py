@@ -1,17 +1,15 @@
 from __future__ import annotations
+
 from collections import Counter
 from operator import attrgetter
-from tkinter import filedialog
 
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-
+import design.mainform
 import pandas as pd
 import plotly.express as px
-
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from toolkit.parser import *
-import design.mainform
 
 
 class SendersViewItem(QTreeWidgetItem):
@@ -21,23 +19,27 @@ class SendersViewItem(QTreeWidgetItem):
 
 class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
     def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
+        super().__init__(parent)
         self.setupUi(self)
 
         self.htmls = {}
         self.loadAction.triggered.connect(self.load)
-        self.resultCmbBox.currentTextChanged.connect(lambda text: self.resultView.setHtml(self.htmls[text]))
+        self.resultCmbBox.currentTextChanged.connect(
+            lambda text: self.resultView.setHtml(self.htmls[text])
+        )
 
     def load(self):
-        path = filedialog.askopenfilename()
+        path, _ = QFileDialog.getOpenFileName(None, "파일 선택", "", "All Files (*)")
+        print(path)
         if not path:
             return
         self.chatsView.clear()
         self.sendersView.clear()
 
         model = self.chatsView.model()
-        with open(path, encoding="UTF-8") as f:
+        with open(path, encoding="utf-8-sig") as f:
             lines = list(map(lambda line: line[:-1], f.readlines()))
+        print(lines)
 
         messages = []
         nicknames = Counter()
@@ -56,7 +58,7 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
                     item.setText(2, data.content.replace("\n", " "))
                     self.chatsView.addTopLevelItem(item)
                     messages.append(data)
-        
+
         for nickname in nicknames:
             item = SendersViewItem()
             item.setText(0, nickname)
@@ -65,9 +67,23 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
 
         df = pd.DataFrame(messages)
         htmls = {
-            "채팅방의 활성 시간 분석 결과": px.histogram(df.timestamp, x="timestamp").to_html(include_plotlyjs='cdn'),
-            "유저별 활동 시간 분석 결과": px.histogram(df.groupby("nickname").timestamp.apply(lambda series: series.map(attrgetter("hour"))).to_frame().reset_index(), color="nickname", x="timestamp").to_html(include_plotlyjs='cdn'),
-            "대화 수 상위 10명의 대화 비율 분석 결과": px.pie(df.value_counts("nickname").nlargest(10).to_frame().reset_index(), "nickname", "count", title="대화 수 상위 10명의 대화 비율").to_html(include_plotlyjs='cdn')
+            "채팅방의 활성 시간 분석 결과": px.histogram(
+                df.timestamp, x="timestamp"
+            ).to_html(include_plotlyjs="cdn"),
+            "유저별 활동 시간 분석 결과": px.histogram(
+                df.groupby("nickname")
+                .timestamp.apply(lambda series: series.map(attrgetter("hour")))
+                .to_frame()
+                .reset_index(),
+                color="nickname",
+                x="timestamp",
+            ).to_html(include_plotlyjs="cdn"),
+            "대화 수 상위 10명의 대화 비율 분석 결과": px.pie(
+                df.value_counts("nickname").nlargest(10).to_frame().reset_index(),
+                "nickname",
+                "count",
+                title="대화 수 상위 10명의 대화 비율",
+            ).to_html(include_plotlyjs="cdn"),
         }
         self.htmls = htmls
 
@@ -76,6 +92,7 @@ class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QApplication()
+    app.setStyle("Fusion")
     form = MainWindow()
     form.show()
     app.exec()
