@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import NewType
 
 Header = NewType("Header", str)
-Event = NewType("Event", str)
+# Event = NewType("Event", str)
 
 
 @dataclass
@@ -13,6 +13,11 @@ class Message:
     nickname: str
     content: str
 
+@dataclass
+class Event:
+    timestamp: datetime.datetime
+    nickname: str | None
+    content: str
 
 class IParser(ABC):
     @staticmethod

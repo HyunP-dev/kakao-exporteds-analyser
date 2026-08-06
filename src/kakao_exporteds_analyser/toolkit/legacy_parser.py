@@ -42,7 +42,7 @@ def iterate(
         ):
             if buffer:
                 yield buffer
-            yield Event(line)
+            yield Event(None, line)
             continue
 
         if header:
