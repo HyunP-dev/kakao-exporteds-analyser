@@ -1,109 +1,63 @@
 from __future__ import annotations
 
+import os
 from collections import Counter
 from operator import attrgetter
 
-import pandas as pd
-import plotly.express as px
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-# from toolkit.legacy_parser import *
 from kakao_exporteds_analyser.model.chatlogsmodel import ChatLogsModel
 from kakao_exporteds_analyser.toolkit.parser import *
 from kakao_exporteds_analyser.widget.detailview import DetailView
+from kakao_exporteds_analyser.widget.filterwidget import *
 
 
-class SendersViewItem(QTreeWidgetItem):
-    def __lt__(self, other: SendersViewItem):
-        return int(self.text(1)) < int(other.text(1))
+class MainHeader(QLabel):
+    def __init__(self):
+        super().__init__()
+        self.setText("KakaoTalk Openchat Analyser")
+        self.setObjectName("MainHeader")
+        self.setMaximumHeight(48)
 
+class MenuBar(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("MenuBar")
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
 
-# class MainWindow(QMainWindow, design.mainform.Ui_MainWindow):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.setupUi(self)
+        self.setMaximumHeight(32)
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(QPushButton("로그 불러오기"))
+        self.layout().setContentsMargins(8, 2, 2, 2)
+        self.layout().addItem(QSpacerItem(0, 0, hData=QSizePolicy.Policy.Expanding))
+        
 
-#         self.htmls = {}
-#         self.loadAction.triggered.connect(self.load)
-#         self.resultCmbBox.currentTextChanged.connect(
-#             lambda text: self.resultView.setHtml(self.htmls[text])
-#         )
-
-#     def load(self):
-#         path, _ = QFileDialog.getOpenFileName(None, "파일 선택", "", "All Files (*)")
-#         print(path)
-#         if not path:
-#             return
-#         self.chatsView.clear()
-#         self.sendersView.clear()
-
-#         model = self.chatsView.model()
-#         with open(path, encoding="utf-8-sig") as f:
-#             text = f.read()
-
-
-#         # messages = []
-#         # nicknames = Counter()
-#         # for data in Parser.parse(text):
-#         #     match data:
-#         #         # case data if isinstance(data, datetime.date) or isinstance(data, str):
-#         #         #     item = QTreeWidgetItem()
-#         #         #     item.setText(0, str(data))
-#         #         #     self.chatsView.addTopLevelItem(item)
-#         #         #     item.setFirstColumnSpanned(True)
-#         #         case Message():
-#         #             item = QTreeWidgetItem()
-#         #             nicknames[data.nickname] += 1
-#         #             item.setText(1, data.nickname)
-#         #             item.setText(0, data.timestamp.strftime("%Y-%m-%d %p %I:%M"))
-#         #             item.setText(2, data.content.replace("\n", " "))
-#         #             self.chatsView.addTopLevelItem(item)
-#         #             messages.append(data)
-#         #         case Event():
-#         #             item = QTreeWidgetItem()
-#         #             if data.timestamp:
-#         #                 item.setText(0, data.timestamp.strftime("%Y-%m-%d %p %I:%M"))
-#         #             item.setText(2, data.content.replace("\n", " "))
-#         #             self.chatsView.addTopLevelItem(item)
-
-
-#         # for nickname in nicknames:
-#         #     item = SendersViewItem()
-#         #     item.setText(0, nickname)
-#         #     item.setText(1, nicknames.get(nickname).__str__())
-#         #     self.sendersView.addTopLevelItem(item)
-
-#         df = pd.DataFrame(messages)
-#         htmls = {
-#             "채팅방의 활성 시간 분석 결과": px.histogram(
-#                 df.timestamp, x="timestamp"
-#             ).to_html(include_plotlyjs="cdn"),
-#             "유저별 활동 시간 분석 결과": px.histogram(
-#                 df.groupby("nickname")
-#                 .timestamp.apply(lambda series: series.map(attrgetter("hour")))
-#                 .to_frame()
-#                 .reset_index(),
-#                 color="nickname",
-#                 x="timestamp",
-#             ).to_html(include_plotlyjs="cdn"),
-#             "대화 수 상위 10명의 대화 비율 분석 결과": px.pie(
-#                 df.value_counts("nickname").nlargest(10).to_frame().reset_index(),
-#                 "nickname",
-#                 "count",
-#                 title="대화 수 상위 10명의 대화 비율",
-#             ).to_html(include_plotlyjs="cdn"),
-#         }
-#         self.htmls = htmls
-
-#         self.resultView.setHtml(htmls[self.resultCmbBox.currentText()])
-
-
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow):#
     def __init__(self):
         super().__init__()
 
+        central_widget = QWidget()
+        central_widget.setLayout(QVBoxLayout())
+        central_widget.layout().setContentsMargins(0,0,0,0)
+        central_widget.layout().setSpacing(0)
+
+        central_widget.layout().addWidget(MainHeader())
+        central_widget.layout().addWidget(MenuBar())
+
+        self.setCentralWidget(central_widget)
+
+        main_splitter = QSplitter()
+        central_widget.layout().addWidget(main_splitter)
+        main_splitter.addWidget(left_tabs := QTabWidget())
+        main_splitter.addWidget(center_splitter := QSplitter(Qt.Orientation.Vertical))
+        main_splitter.addWidget(right_tabs := QTabWidget())
+        main_splitter.setSizes([250, 800, 400])
+
+        self.setStatusBar(QStatusBar())
+        self.statusBar().addWidget(status_label := QLabel("  총 레코드 수:  "))
+        self.status_label = status_label
 
         self.logs = []
         self.chat_view = QTreeView()
@@ -111,23 +65,33 @@ class MainWindow(QMainWindow):
         self.chat_view.setRootIsDecorated(False)
         self.chat_view.setModel(ChatLogsModel([]))
 
+        upper_tabs = QTabWidget()
+        upper_tabs.addTab(self.chat_view, "대화내역")
+        center_splitter.addWidget(upper_tabs)
 
-        users_dock = QDockWidget("대화상대", self)
+        lower_tabs = QTabWidget()
+        lower_tabs.setStyleSheet("QTabWidget QWidget { border: none; }")
+        lower_tabs.addTab(preview := QPlainTextEdit(), "미리보기")
+        self.preview = preview
+        self.preview.setReadOnly(True)
+
+        center_splitter.addWidget(lower_tabs)
+
+        center_splitter.setSizes([600, 360])
+
         users_view = QTreeView()
         users_view.setUniformRowHeights(True)
         users_view.setRootIsDecorated(False)
-        users_dock.setWidget(users_view)
         self.users_view = users_view
+        left_tabs.addTab(self.users_view, "대화상대")
 
-        detail_dock = QDockWidget("상세정보", self)
         self.detail_view = DetailView()
-        detail_dock.setWidget(self.detail_view)
-
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, users_dock)
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, detail_dock)
+        right_tabs.addTab(self.detail_view, "상세정보")
 
         self.chat_view.doubleClicked.connect(self.on_chat_view_doubleClicked)
-        self.setCentralWidget(self.chat_view)
+        self.users_view.doubleClicked.connect(self.on_users_view_doubleClicked)
+        self.users_view.setEditTriggers(self.users_view.EditTrigger.NoEditTriggers)
+
 
         self.load_chats()
 
@@ -144,22 +108,57 @@ class MainWindow(QMainWindow):
         users_model.setHorizontalHeaderLabels(["닉네임", "메시지 수"])
 
         counter = Counter([log.nickname for log in logs if isinstance(log, Message)])
-        for (nickname, count) in counter.most_common():
+        for nickname, count in counter.most_common():
             users_model.appendRow([QStandardItem(nickname), QStandardItem(str(count))])
 
         self.users_view.setModel(users_model)
-        
+        self.status_label.setText(f"  총 레코드 수: {len(logs)}  ")
 
     @Slot(QModelIndex)
     def on_chat_view_doubleClicked(self, index: QModelIndex):
+        timestamp_index = index.model().index(index.row(), 0)
         nickname_index = index.model().index(index.row(), 1)
+        content_index = index.model().index(index.row(), 2)
+        nickname = nickname_index.data(Qt.ItemDataRole.DisplayRole)
+        timestamp = timestamp_index.data(Qt.ItemDataRole.DisplayRole)
+        content = content_index.data(Qt.ItemDataRole.DisplayRole)
+        self.detail_view.open(self.logs, nickname)
+
+        self.preview.setPlainText(f"""
+【 전송 시각 】
+{timestamp}
+
+【 보낸이 】
+{nickname}
+
+【 메시지 전문 】
+{self.logs[index.row()].content}
+""".strip())
+        
+
+    @Slot(QModelIndex)
+    def on_users_view_doubleClicked(self, index: QModelIndex):
+        nickname_index = index.model().index(index.row(), 0)
         nickname = nickname_index.data(Qt.ItemDataRole.DisplayRole)
         self.detail_view.open(self.logs, nickname)
 
 
 if __name__ == "__main__":
     app = QApplication()
-    app.setStyle("Fusion")
+    app.setStyle("fusion")
+    palette = QPalette()
+    palette.setColor(QPalette.ColorRole.Window, QColor(0xf7, 0xf7, 0xf7))
+    palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Base, Qt.GlobalColor.white)
+    palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
+    palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.black)
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(0x48, 0x77, 0xd7))
+    palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.white)
+    
+    app.setPalette(palette)
+    with open(os.path.dirname(__file__) + "/style/light.qss") as f:
+        app.setStyleSheet(f.read())
     form = MainWindow()
-    form.show()
+    form.showMaximized()
     app.exec()

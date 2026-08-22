@@ -1,0 +1,121 @@
+#MainHeader {
+    background-color: qlineargradient(
+        x1: 0, y1: 0, 
+        x2: 1, y2: 0, 
+        stop: 0 #020929,
+        stop: 0.7 #020929,
+        stop: 1 #3a2323
+    );
+    color: white; 
+    padding: 8px;
+    font-size: 16px; 
+}
+
+#MenuBar {
+    border-bottom: 1px solid #e5e5e5;
+    background-color: white;
+    color: #767676;
+}
+
+#MenuBar QPushButton {
+    background: transparent;
+    border: none;
+}
+
+QStatusBar {
+    background-color: #020929;
+    color: white;
+}
+
+QStatusBar QLabel {
+    color: white;
+}
+
+
+LabeledWidget QLabel {
+    padding: 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+DetailView {
+    background-color: white;
+}
+
+
+
+QTreeView {
+    border: 0;
+}
+
+QHeaderView::section {
+    background-color: #fff;
+    color: #000;
+    padding-left: 4px;
+    border: none;
+    border-right: 1px solid #e5e5e5;
+}
+
+QHeaderView::section:hover {
+    background-color: #d9ebf9;
+}
+
+QHeaderView::section:checked {
+    background-color: #bcdcf4;
+}
+
+/* QDockWidget::title {
+    padding: 3px;
+    border: 1px solid #a0a0a0;
+    border-radius: 2px;
+} */
+
+QDockWidget {
+    background-color: #ffffff;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+QDockWidget::title {
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    padding-left: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border: 1px solid #b9b9b9;
+}
+
+QDockWidget::close-button {
+    subcontrol-position: top right;
+    subcontrol-origin: margin;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+QDockWidget::float-button {
+    subcontrol-position: top right;
+    subcontrol-origin: margin;
+    position: absolute;
+    top: 6px;
+    right: 30px;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+QDockWidget::float-button:hover {
+    background-color: #e2e8f0; /* 마우스 올렸을 때 은은한 회색 */
+}
+
+QDockWidget::float-button:pressed {
+    background-color: #cbd5e1;
+}

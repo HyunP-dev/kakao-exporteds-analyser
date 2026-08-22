@@ -1,4 +1,5 @@
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
+
 from ..toolkit.parser import *
 
 

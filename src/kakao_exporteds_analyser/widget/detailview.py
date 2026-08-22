@@ -19,21 +19,35 @@ class LabeledWidget(QWidget):
 class DetailView(QSplitter):
     def __init__(self, parent=None):
         super().__init__()
+        self.setObjectName("DetailView")
         self.setOrientation(Qt.Orientation.Vertical)
+        self.setContentsMargins(0, 0, 0, 0)
 
         self.summary_view = QTreeView()
+        self.summary_view.setRootIsDecorated(False)
+        self.summary_view.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
         self.manager_view = QTreeView()
         self.manager_view.setRootIsDecorated(False)
+        self.manager_view.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
         self.inout_view = QTreeView()
         self.inout_view.setRootIsDecorated(False)
+        self.inout_view.setEditTriggers(QTreeView.EditTrigger.NoEditTriggers)
 
         self.addWidget(LabeledWidget("개요", self.summary_view))
         self.addWidget(LabeledWidget("부방장 이력", self.manager_view))
         self.addWidget(LabeledWidget("입장·퇴장·강퇴 이력", self.inout_view))
 
     def open(self, logs: list, nickname: str):
+        summary_model = QStandardItemModel()
+        summary_model.setHorizontalHeaderLabels(["항목", "값"])
+        summary_model.appendRow([
+            QStandardItem("닉네임"),
+            QStandardItem(nickname)
+        ])
+
+
         manager_model = QStandardItemModel()
         manager_model.setHorizontalHeaderLabels(["시각", "구분"])
 
@@ -82,5 +96,7 @@ class DetailView(QSplitter):
                             QStandardItem("부방장 해제"),
                         ]
                     )
+
+        self.summary_view.setModel(summary_model)
         self.inout_view.setModel(inout_model)
         self.manager_view.setModel(manager_model)
