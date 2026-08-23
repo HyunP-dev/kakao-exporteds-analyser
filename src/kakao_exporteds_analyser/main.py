@@ -92,6 +92,8 @@ class MainWindow(QMainWindow):#
         self.users_view.doubleClicked.connect(self.on_users_view_doubleClicked)
         self.users_view.setEditTriggers(self.users_view.EditTrigger.NoEditTriggers)
 
+        self.detail_view.manager_view.doubleClicked.connect(self.on_event_doubleClicked)
+        self.detail_view.inout_view.doubleClicked.connect(self.on_event_doubleClicked)
 
         self.load_chats()
 
@@ -141,6 +143,22 @@ class MainWindow(QMainWindow):#
         nickname_index = index.model().index(index.row(), 0)
         nickname = nickname_index.data(Qt.ItemDataRole.DisplayRole)
         self.detail_view.open(self.logs, nickname)
+
+    @Slot(QModelIndex)
+    def on_event_doubleClicked(self, index: QModelIndex):
+        idx = index.model().index(index.row(), 0).data(Qt.ItemDataRole.UserRole)
+        log = self.logs[idx]
+        self.chat_view.setCurrentIndex(self.chat_view.model().index(idx, 0))
+        self.preview.setPlainText(f"""
+【 전송 시각 】
+{log.timestamp}
+
+【 보낸이 】
+
+
+【 메시지 전문 】
+{log.content}
+        """.strip())
 
 
 if __name__ == "__main__":

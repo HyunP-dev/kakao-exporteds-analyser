@@ -54,48 +54,53 @@ class DetailView(QSplitter):
         inout_model = QStandardItemModel()
         inout_model.setHorizontalHeaderLabels(["시각", "구분"])
 
-        for log in logs:
+        for i, log in enumerate(logs):
             if not (hasattr(log, "nickname") and log.nickname == nickname):
                 continue
 
             if "Event" in str(type(log)):
                 print(log)
-
+                log: Event
+                row = None
+                
                 if log.content.endswith("님이 들어왔습니다."):
-                    inout_model.appendRow(
+                    inout_model.appendRow(row:=
                         [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("입장"),
                         ]
                     )
                 if log.content.endswith("님이 나갔습니다."):
-                    inout_model.appendRow(
+                    inout_model.appendRow(row:=
                         [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("퇴장"),
                         ]
                     )
                 if log.content.endswith("님을 내보냈습니다."):
-                    inout_model.appendRow(
+                    inout_model.appendRow(row:=
                         [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("강퇴"),
                         ]
                     )
                 if log.content.endswith("님이 부방장이 되었습니다."):
-                    manager_model.appendRow(
+                    manager_model.appendRow(row:=
                         [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("부방장 임명"),
                         ]
                     )
                 if log.content.endswith("님이 부방장에서 해제되었습니다."):
-                    manager_model.appendRow(
+                    manager_model.appendRow(row:=
                         [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("부방장 해제"),
                         ]
                     )
+
+                if row is not None:
+                    row[0].setData(i, Qt.ItemDataRole.UserRole)
 
         self.summary_view.setModel(summary_model)
         self.inout_view.setModel(inout_model)
