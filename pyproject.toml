@@ -1,5 +1,5 @@
 [project]
-name = "kakao-exporteds-analyser"
+name = "kakaotalk-openchat-analyzer"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Hyun Park", email = "hyunp.dev@gmail.com" }]
@@ -28,3 +28,6 @@ default-groups = "all"
 [build-system]
 requires = ["uv_build>=0.11.7,<0.12.0"]
 build-backend = "uv_build"
+
+[project.scripts]
+openchat-analyzer = "kakaotalk_openchat_analyzer.main:main"

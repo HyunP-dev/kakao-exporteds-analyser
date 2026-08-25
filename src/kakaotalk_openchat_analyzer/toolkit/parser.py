@@ -4,6 +4,7 @@ import re
 from .iparser import *
 
 TIMESTAMP_REGEX_STR = r"\d{4}년 \d+월 \d+일 오[전후] \d+:\d+"
+TIMESTAMP_REGEX_DOT_STR = r"\d{4}. \d+. \d+. 오[전후] \d+:\d+"
 
 with open("KakaoTalkChats.txt") as f:
     lines = f.read().splitlines()
@@ -17,6 +18,11 @@ class Parser(IParser):
         logs = []
         is_logging = False
         for line in lines:
+            if re.match("^" + TIMESTAMP_REGEX_DOT_STR + ", ", line):
+                line = line.replace(".", "년", 1)
+                line = line.replace(".", "월", 1)
+                line = line.replace(".", "일", 1)
+
             #  삭제된 메시지
             if line == "메시지가 삭제되었습니다.":
                 if is_logging:

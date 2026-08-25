@@ -2,7 +2,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-from kakao_exporteds_analyser.toolkit.iparser import Event
+from kakaotalk_openchat_analyzer.toolkit.iparser import Event
 
 
 class LabeledWidget(QWidget):

@@ -692,7 +692,7 @@ wheels = [
 ]
 
 [[package]]
-name = "kakao-exporteds-analyser"
+name = "kakaotalk-openchat-analyzer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

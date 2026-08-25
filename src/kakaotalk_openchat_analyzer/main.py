@@ -8,10 +8,10 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-from kakao_exporteds_analyser.model.chatlogsmodel import ChatLogsModel
-from kakao_exporteds_analyser.toolkit.parser import *
-from kakao_exporteds_analyser.widget.detailview import DetailView
-from kakao_exporteds_analyser.widget.filterwidget import *
+from kakaotalk_openchat_analyzer.model.chatlogsmodel import ChatLogsModel
+from kakaotalk_openchat_analyzer.toolkit.parser import *
+from kakaotalk_openchat_analyzer.widget.detailview import DetailView
+from kakaotalk_openchat_analyzer.widget.filterwidget import *
 
 
 class MainHeader(QLabel):
@@ -21,6 +21,7 @@ class MainHeader(QLabel):
         self.setObjectName("MainHeader")
         self.setMaximumHeight(48)
 
+
 class MenuBar(QWidget):
     def __init__(self):
         super().__init__()
@@ -29,22 +30,23 @@ class MenuBar(QWidget):
 
         self.setMaximumHeight(32)
         self.setLayout(QHBoxLayout())
-        self.layout().addWidget(QPushButton("로그 불러오기"))
+        self.layout().addWidget(load_btn := QPushButton("로그 불러오기"))
         self.layout().setContentsMargins(8, 2, 2, 2)
         self.layout().addItem(QSpacerItem(0, 0, hData=QSizePolicy.Policy.Expanding))
-        
+        self.load_btn = load_btn
 
-class MainWindow(QMainWindow):#
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         central_widget = QWidget()
         central_widget.setLayout(QVBoxLayout())
-        central_widget.layout().setContentsMargins(0,0,0,0)
+        central_widget.layout().setContentsMargins(0, 0, 0, 0)
         central_widget.layout().setSpacing(0)
 
         central_widget.layout().addWidget(MainHeader())
-        central_widget.layout().addWidget(MenuBar())
+        central_widget.layout().addWidget(menu_bar := MenuBar())
+        menu_bar.load_btn.clicked.connect(self.load_chats)
 
         self.setCentralWidget(central_widget)
 
@@ -95,10 +97,14 @@ class MainWindow(QMainWindow):#
         self.detail_view.manager_view.doubleClicked.connect(self.on_event_doubleClicked)
         self.detail_view.inout_view.doubleClicked.connect(self.on_event_doubleClicked)
 
-        self.load_chats()
-
     def load_chats(self):
-        with open("KakaoTalkChats.txt") as f:
+        dialog = QFileDialog()
+        filename, _ = dialog.getOpenFileName()
+        
+        if not filename:
+            return
+        
+        with open(filename) as f:
             text = f.read()
 
         self.logs = list(Parser.parse(text))
@@ -126,7 +132,8 @@ class MainWindow(QMainWindow):#
         content = content_index.data(Qt.ItemDataRole.DisplayRole)
         self.detail_view.open(self.logs, nickname)
 
-        self.preview.setPlainText(f"""
+        self.preview.setPlainText(
+            f"""
 【 전송 시각 】
 {timestamp}
 
@@ -135,8 +142,8 @@ class MainWindow(QMainWindow):#
 
 【 메시지 전문 】
 {self.logs[index.row()].content}
-""".strip())
-        
+""".strip()
+        )
 
     @Slot(QModelIndex)
     def on_users_view_doubleClicked(self, index: QModelIndex):
@@ -149,7 +156,8 @@ class MainWindow(QMainWindow):#
         idx = index.model().index(index.row(), 0).data(Qt.ItemDataRole.UserRole)
         log = self.logs[idx]
         self.chat_view.setCurrentIndex(self.chat_view.model().index(idx, 0))
-        self.preview.setPlainText(f"""
+        self.preview.setPlainText(
+            f"""
 【 전송 시각 】
 {log.timestamp}
 
@@ -158,25 +166,30 @@ class MainWindow(QMainWindow):#
 
 【 메시지 전문 】
 {log.content}
-        """.strip())
+        """.strip()
+        )
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication()
     app.setStyle("fusion")
     palette = QPalette()
-    palette.setColor(QPalette.ColorRole.Window, QColor(0xf7, 0xf7, 0xf7))
+    palette.setColor(QPalette.ColorRole.Window, QColor(0xF7, 0xF7, 0xF7))
     palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.black)
     palette.setColor(QPalette.ColorRole.Base, Qt.GlobalColor.white)
     palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.black)
     palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
     palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.black)
-    palette.setColor(QPalette.ColorRole.Highlight, QColor(0x48, 0x77, 0xd7))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(0x48, 0x77, 0xD7))
     palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.white)
-    
+
     app.setPalette(palette)
     with open(os.path.dirname(__file__) + "/style/light.qss") as f:
         app.setStyleSheet(f.read())
     form = MainWindow()
     form.showMaximized()
     app.exec()
+
+
+if __name__ == "__main__":
+    main()
