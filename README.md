@@ -3,7 +3,7 @@
 ![](./screenshot/Screenshot%202026-08-23%20at%2012.25.50 AM.png)
 
 
-## 기능
+## To-dos
 
 - [X] Android 버전에서 내보낸 로그 파싱 기능
 - [X] iOS 버전에서 내보낸 로그 파싱 기능
