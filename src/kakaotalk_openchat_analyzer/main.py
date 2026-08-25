@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import Counter
-from operator import attrgetter
 
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -17,7 +16,7 @@ from kakaotalk_openchat_analyzer.widget.filterwidget import *
 class MainHeader(QLabel):
     def __init__(self):
         super().__init__()
-        self.setText("KakaoTalk Openchat Analyser")
+        self.setText("KakaoTalk Openchat Analyzer")
         self.setObjectName("MainHeader")
         self.setMaximumHeight(48)
 
@@ -35,9 +34,12 @@ class MenuBar(QWidget):
         self.layout().addItem(QSpacerItem(0, 0, hData=QSizePolicy.Policy.Expanding))
         self.load_btn = load_btn
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowTitle("Openchat Analyzer")
 
         central_widget = QWidget()
         central_widget.setLayout(QVBoxLayout())
@@ -100,10 +102,10 @@ class MainWindow(QMainWindow):
     def load_chats(self):
         dialog = QFileDialog()
         filename, _ = dialog.getOpenFileName()
-        
+
         if not filename:
             return
-        
+
         with open(filename) as f:
             text = f.read()
 
@@ -184,8 +186,12 @@ def main():
     palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.white)
 
     app.setPalette(palette)
-    with open(os.path.dirname(__file__) + "/style/light.qss") as f:
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    STYLE_FILE_PATH = os.path.join(BASE_DIR, "style", "light.qss")
+    with open(STYLE_FILE_PATH) as f:
         app.setStyleSheet(f.read())
+
     form = MainWindow()
     form.showMaximized()
     app.exec()

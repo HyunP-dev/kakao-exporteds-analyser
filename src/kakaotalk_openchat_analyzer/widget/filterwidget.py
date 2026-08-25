@@ -26,7 +26,7 @@ class FilterHeader(QWidget):
         self.layout().addWidget(QPushButton("날짜 필터"))
         self.layout().addWidget(QPushButton("키워드 필터"))
         self.layout().addWidget(QPushButton("유저 필터"))
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
 
 class FilterWidget(QWidget):
@@ -34,20 +34,17 @@ class FilterWidget(QWidget):
         super().__init__()
 
         self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
-        
         self.layout().addWidget(FilterHeader())
 
         self.racks_layout = QVBoxLayout()
         self.racks_area = QScrollArea()
-        
 
         self.racks_view = QWidget()
         self.racks_area.setWidget(self.racks_view)
         self.racks_area.setWidgetResizable(True)
         self.racks_view.setLayout(self.racks_layout)
-
 
         self.layout().addWidget(self.racks_area)
 

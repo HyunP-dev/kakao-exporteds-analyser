@@ -42,11 +42,7 @@ class DetailView(QSplitter):
     def open(self, logs: list, nickname: str):
         summary_model = QStandardItemModel()
         summary_model.setHorizontalHeaderLabels(["항목", "값"])
-        summary_model.appendRow([
-            QStandardItem("닉네임"),
-            QStandardItem(nickname)
-        ])
-
+        summary_model.appendRow([QStandardItem("닉네임"), QStandardItem(nickname)])
 
         manager_model = QStandardItemModel()
         manager_model.setHorizontalHeaderLabels(["시각", "구분"])
@@ -62,38 +58,38 @@ class DetailView(QSplitter):
                 print(log)
                 log: Event
                 row = None
-                
+
                 if log.content.endswith("님이 들어왔습니다."):
-                    inout_model.appendRow(row:=
-                        [
+                    inout_model.appendRow(
+                        row := [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("입장"),
                         ]
                     )
                 if log.content.endswith("님이 나갔습니다."):
-                    inout_model.appendRow(row:=
-                        [
+                    inout_model.appendRow(
+                        row := [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("퇴장"),
                         ]
                     )
                 if log.content.endswith("님을 내보냈습니다."):
-                    inout_model.appendRow(row:=
-                        [
+                    inout_model.appendRow(
+                        row := [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("강퇴"),
                         ]
                     )
                 if log.content.endswith("님이 부방장이 되었습니다."):
-                    manager_model.appendRow(row:=
-                        [
+                    manager_model.appendRow(
+                        row := [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("부방장 임명"),
                         ]
                     )
                 if log.content.endswith("님이 부방장에서 해제되었습니다."):
-                    manager_model.appendRow(row:=
-                        [
+                    manager_model.appendRow(
+                        row := [
                             QStandardItem(log.timestamp.strftime("%Y-%m-%d %p %I:%M")),
                             QStandardItem("부방장 해제"),
                         ]

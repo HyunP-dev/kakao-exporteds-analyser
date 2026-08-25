@@ -28,11 +28,16 @@ class ChatLogsModel(QAbstractTableModel):
                     )[index.column()]
                 case Event():
                     return (
-                        log.timestamp.strftime("%Y-%m-%d %p %I:%M") if log.timestamp else "",
+                        log.timestamp.strftime("%Y-%m-%d %p %I:%M")
+                        if log.timestamp
+                        else "",
                         "",
                         log.content.replace("\n", " "),
                     )[index.column()]
 
     def headerData(self, section, orientation, role):
-        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
+        if (
+            orientation == Qt.Orientation.Horizontal
+            and role == Qt.ItemDataRole.DisplayRole
+        ):
             return self.HEADERS[section]

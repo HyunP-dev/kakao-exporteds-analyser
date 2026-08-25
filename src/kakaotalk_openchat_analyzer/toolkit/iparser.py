@@ -13,11 +13,13 @@ class Message:
     nickname: str
     content: str
 
+
 @dataclass
 class Event:
     timestamp: datetime.datetime
     nickname: str | None
     content: str
+
 
 class IParser(ABC):
     @staticmethod
