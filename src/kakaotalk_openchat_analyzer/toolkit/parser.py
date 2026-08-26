@@ -4,7 +4,7 @@ import re
 from .iparser import *
 
 TIMESTAMP_REGEX_STR = r"\d{4}년 \d+월 \d+일 오[전후] \d+:\d+"
-TIMESTAMP_REGEX_DOT_STR = r"\d{4}. \d+. \d+. 오[전후] \d+:\d+"
+TIMESTAMP_REGEX_DOT_STR = r"\d{4}\. \d+\. \d+\. 오[전후] \d+:\d+"
 
 
 class Parser(IParser):
