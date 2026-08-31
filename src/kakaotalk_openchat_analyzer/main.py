@@ -8,8 +8,10 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from kakaotalk_openchat_analyzer.model.chatlogsmodel import ChatLogsModel
+from kakaotalk_openchat_analyzer.model.filterproxymodel import FilterProxyModel
 from kakaotalk_openchat_analyzer.toolkit.parser import *
 from kakaotalk_openchat_analyzer.widget.detailview import DetailView
+from kakaotalk_openchat_analyzer.widget.filterbar import FilterBar
 from kakaotalk_openchat_analyzer.widget.filterwidget import *
 
 
@@ -64,13 +66,21 @@ class MainWindow(QMainWindow):
         self.status_label = status_label
 
         self.logs = []
+        
         self.chat_view = QTreeView()
+        self.chat_view.setObjectName("ChatView")
         self.chat_view.setUniformRowHeights(True)
         self.chat_view.setRootIsDecorated(False)
         self.chat_view.setModel(ChatLogsModel([]))
 
         upper_tabs = QTabWidget()
-        upper_tabs.addTab(self.chat_view, "대화내역")
+        self.chat_panel = QWidget()
+        self.chat_panel.setLayout(QVBoxLayout())
+        self.chat_panel.layout().setContentsMargins(0, 0, 0, 0)
+        self.chat_panel.layout().addWidget(filterBar := FilterBar())
+        self.filterBar = filterBar
+        self.chat_panel.layout().addWidget(self.chat_view)
+        upper_tabs.addTab(self.chat_panel, "대화내역")
         center_splitter.addWidget(upper_tabs)
 
         lower_tabs = QTabWidget()
@@ -99,6 +109,21 @@ class MainWindow(QMainWindow):
         self.detail_view.manager_view.doubleClicked.connect(self.on_event_doubleClicked)
         self.detail_view.inout_view.doubleClicked.connect(self.on_event_doubleClicked)
 
+        self.filterBar.startEdit.dateTimeChanged.connect(self.on_time_range_changed)
+        self.filterBar.endEdit.dateTimeChanged.connect(self.on_time_range_changed)
+        self.filterBar.keywordEdit.textChanged.connect(self.on_keyword_changed)
+
+
+    def on_time_range_changed(self):
+        start = self.filterBar.startEdit.dateTime()
+        end = self.filterBar.endEdit.dateTime()
+
+        self.proxy_model.setFilterTimeRange(start, end)
+
+    def on_keyword_changed(self):
+        self.proxy_model.setFilterKeyword(self.filterBar.keywordEdit.text())
+        
+
     def load_chats(self):
         dialog = QFileDialog()
         filename, _ = dialog.getOpenFileName()
@@ -112,7 +137,15 @@ class MainWindow(QMainWindow):
         self.logs = list(Parser.parse(text))
         logs = self.logs
 
-        self.chat_view.setModel(ChatLogsModel(logs))
+        timestamps = {log.timestamp for log in logs if log.timestamp}
+        self.filterBar.startEdit.setDateTime(min(timestamps))
+        self.filterBar.endEdit.setDateTime(max(timestamps))
+
+        model = ChatLogsModel(logs)
+        proxy_model = FilterProxyModel()
+        self.proxy_model = proxy_model
+        proxy_model.setSourceModel(model)
+        self.chat_view.setModel(proxy_model)
 
         users_model = QStandardItemModel()
         users_model.setHorizontalHeaderLabels(["닉네임", "메시지 수"])

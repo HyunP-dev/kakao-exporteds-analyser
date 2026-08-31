@@ -22,6 +22,10 @@
     border: none;
 }
 
+#ChatView {
+    border-top: 1px solid #e5e5e5;
+}
+
 QStatusBar {
     background-color: #020929;
     color: white;
@@ -62,60 +66,4 @@ QHeaderView::section:hover {
 
 QHeaderView::section:checked {
     background-color: #bcdcf4;
-}
-
-/* QDockWidget::title {
-    padding: 3px;
-    border: 1px solid #a0a0a0;
-    border-radius: 2px;
-} */
-
-QDockWidget {
-    background-color: #ffffff;
-    color: #334155;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-QDockWidget::title {
-    font-weight: 600;
-    font-size: 13px;
-    text-align: left;
-    padding-left: 8px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    border: 1px solid #b9b9b9;
-}
-
-QDockWidget::close-button {
-    subcontrol-position: top right;
-    subcontrol-origin: margin;
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    background-color: transparent;
-}
-
-QDockWidget::float-button {
-    subcontrol-position: top right;
-    subcontrol-origin: margin;
-    position: absolute;
-    top: 6px;
-    right: 30px;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    background-color: transparent;
-}
-
-QDockWidget::float-button:hover {
-    background-color: #e2e8f0; /* 마우스 올렸을 때 은은한 회색 */
-}
-
-QDockWidget::float-button:pressed {
-    background-color: #cbd5e1;
 }

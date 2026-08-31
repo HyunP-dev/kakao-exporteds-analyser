@@ -4,7 +4,11 @@ from ..toolkit.parser import *
 
 
 class ChatLogsModel(QAbstractTableModel):
-    HEADERS = ("Timestamp", "Nickname", "Content")
+    HEADERS = ("보낸 시간", "닉네임", "메시지")
+
+    class Role:
+        EntryRole = Qt.ItemDataRole.UserRole + 1
+
 
     def __init__(self, logs: list[Message | Event]):
         super().__init__()
@@ -34,6 +38,10 @@ class ChatLogsModel(QAbstractTableModel):
                         "",
                         log.content.replace("\n", " "),
                     )[index.column()]
+
+        if role == ChatLogsModel.Role.EntryRole:
+            return self.logs[index.row()]
+
 
     def headerData(self, section, orientation, role):
         if (
